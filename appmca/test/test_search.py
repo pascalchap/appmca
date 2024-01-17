@@ -17,14 +17,40 @@ def get_names(filename = 'data/hotes.txt'):
 
 names = get_names()
 
+def print_search(pattern,names,method='unordered',minscore=None,**kw):
+	res_str= f'result for search of "{pattern}" using method {method} '
+	if minscore != None:
+		print(res_str,
+			  f'and minscore {minscore} is:\n',
+			  search(pattern,names,method=method,minscore=minscore,**kw)
+			  )
+	else:
+		print(res_str,
+			  f'is:\n',
+			  search(pattern,names,method=method,**kw)
+			  )
+
+
 #perform search with each method
-print(search('chm',names))
-print(search('chm',names,'fuzzy_bool'))
-print(search('chm',names,'unordered'))
-print(search('chmrcl',names,'fuzzy_bool'))
-print(search('chmrcl',names))
-print(search('rbnbcr',names))
-print(search('chm',names,'only_fail'))
+print_search('chm',names)
+print_search('chm',names,'fuzzy_bool')
+print_search('chm',names,'unordered')
+print_search('chm',names,'fuzzy_weight')
+print_search('chm',names,'fuzzy_weight',minscore=5)
+print_search('chmrcl',names,'fuzzy_bool')
+print_search('chmrcl',names)
+print_search('chmrcl',names,'fuzzy_weight',minscore=0,unmatched_penalty=-2)
+print_search('chmrcl',names,'fuzzy_weight',minscore=5)
+print_search('chmrcl',names,'fuzzy_weight')
+print_search('chmrcl',names,'fuzzy_weight',minscore=12)
+print_search('chmrcl',names,'fuzzy_bool')
+print_search('mrclch',names)
+print_search('mrclch',names,'fuzzy_weight',minscore=3)
+print_search('mrclch',names,'fuzzy_weight',minscore=5)
+print_search('mrclch',names,'fuzzy_weight')
+print_search('mrclch',names,'fuzzy_weight',minscore=12)
+print_search('rbnbcr',names)
+print_search('chm',names,'only_fail')
 
 #create a weighted random list of NbPattern patterns to compare the performances of the different methods
 NbPattern = 10_000

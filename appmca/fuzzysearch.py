@@ -110,7 +110,7 @@ def _fuzzy_match(pattern, string, adj_bonus=5, sep_bonus=10, camel_bonus=10,
 			prev_match = False
 
 		prev_lower = s_char == s_lower and s_lower != s_upper
-		prev_sep = s_char in '_ '
+		prev_sep = s_char in '_ -'
 
 		s_idx += 1
 
@@ -133,8 +133,8 @@ def _unordered_match(pattern,string):
 	return not(any(v < 0 for v in res.values()))
 
 # interfaces to matching methods
-def fuzzy_weight(pattern,string,minscore=9):
-	_ , score = _fuzzy_match(pattern,string)
+def fuzzy_weight(pattern,string,minscore=9,unmatched_penalty=-1):
+	_ , score = _fuzzy_match(pattern,string,unmatched_penalty=unmatched_penalty)
 	return score > minscore
 
 def fuzzy_bool(pattern,string):
