@@ -23,6 +23,7 @@ print(search('chm',names,'fuzzy_bool'))
 print(search('chm',names,'unordered'))
 print(search('chmrcl',names,'fuzzy_bool'))
 print(search('chmrcl',names))
+print(search('rbnbcr',names))
 print(search('chm',names,'only_fail'))
 
 #create a weighted random list of NbPattern patterns to compare the performances of the different methods

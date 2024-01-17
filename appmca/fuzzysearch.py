@@ -6,8 +6,9 @@ MIT License
 forked from github Matt Menzenski 2016
 """
 
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 from collections import Counter 
+from unidecode import unidecode
 
 #matching methods
 def _fuzzy_match_simple(pattern, string):
@@ -149,4 +150,4 @@ methods = {'fuzzy_weight':fuzzy_weight, 'fuzzy_bool':fuzzy_bool, 'unordered':uno
 
 def search(pattern,names,method='unordered', **kw):
 	method = methods[method]
-	return list(filter(lambda x: method(pattern,x,**kw), names)) 
+	return list(filter(lambda x: method(unidecode(pattern),unidecode(x),**kw), names)) 
