@@ -149,5 +149,7 @@ def only_fail(pattern,string):
 methods = {'fuzzy_weight':fuzzy_weight, 'fuzzy_bool':fuzzy_bool, 'unordered':unordered, 'only_fail':only_fail}
 
 def search(pattern,names,method='unordered', **kw):
+	if method == None: 
+		method = 'unordered'
 	method = methods[method]
 	return list(filter(lambda x: method(unidecode(pattern),unidecode(x),**kw), names)) 

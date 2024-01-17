@@ -140,7 +140,7 @@ class TreeviewEdit(ttk.Treeview):
 			last_index+=1
 		self.draw_stripes()
 
-	def get_entry(self, colume):
+	def get_entry(self, column):
 		return ttk.Entry
 
 class TreeviewSet():
