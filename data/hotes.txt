@@ -6,8 +6,8 @@ Lola Armantier
 Johan Assenza
 Victoria Assenza
 Alexandre Ayala
-Rafaela Azevedo
-Leo Ballestra
+RafaÃ«la Azevedo
+LÃ©o Ballestra
 Tiago Barroso
 Juliane Bartoli
 Julien Bartolomei
@@ -15,12 +15,12 @@ Camille Baudrand
 Antoine Bayen
 Valentin Bayen
 Guillaume Beaugrand
-Hugo Becarre
-Robin Becarre
+Hugo BÃ©carre
+Robin BÃ©carre
 Philippe Benedetti
 Marion Benvenuti
 Tatiana Bernard
-Valerie Betz
+ValÃ©rie Betz
 Vlada Bitca
 Justine Blanchard
 Alexandre Blanes
@@ -34,7 +34,7 @@ Amina Bouhadjar
 Essma Bouhadjar
 Mathilde Boy De La Tour
 Nathalie Bricout
-Marc-Andre Brizi
+Marc-AndrÃ© Brizi
 Carla Brocker
 Wilfried Brunelli Beaudoux
 Alberto Calimera
@@ -74,12 +74,12 @@ Raquel Machado
 Lea Danset
 Thierry De Amorim
 Nicolas De Gaillande
-Angélique De Luca
+Angelique De Luca
 Giulia De Stefano
 Leonie Delorme
 Lluna Delourme
 Saber Derouiche
-Marie Devémy
+Marie Devemy
 Adrien Deverdun
 Evelyne Deverdun
 Jean Devy
@@ -166,7 +166,7 @@ Julien Maman
 Clara Marangoni
 Kassandra Marascia
 Loic Marcille
-Anthéa Marié
+Anthea Marie
 Ilir Marocco
 Kevin Maroudin
 Anhelina Marozava
@@ -198,7 +198,7 @@ Constance Olivier
 Rudy Orsony
 Dolly Pacaud
 Marie-Charlotte Pacaud
-Céleste Palmaro
+Celeste Palmaro
 Sean Panizzi
 Sharon Partouche
 Ambre Paskali
@@ -207,7 +207,7 @@ Melodie Pechberty
 Octavio Perez
 Cyriaque Perret
 Hugo Perrier
-Chloé Perrin
+Chloe Perrin
 Oana Petrica
 Diana Petrova
 Teodora Peykova
@@ -241,7 +241,7 @@ Alain Rupil
 Louisa Saghir
 Sherazade Saim
 Franck Salerno
-Chloé Santalucia
+Chloe Santalucia
 Diego Sarasola
 Remi Sauvage
 Marco Scanella
