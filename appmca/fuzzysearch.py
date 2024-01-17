@@ -3,51 +3,37 @@
 
 """
 MIT License
-Copyright (c) 2016 Matt Menzenski
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+forked from github Matt Menzenski 2016
 """
 
 from __future__ import unicode_literals
+from collections import Counter 
 
-
-def fuzzy_match_simple(pattern, instring):
-	"""Return True if each character in pattern is found in order in instring.
+#matching methods
+def _fuzzy_match_simple(pattern, string):
+	"""Return True if each character in pattern is found in order in string.
 	:param pattern: the pattern to be matched
 	:type pattern: ``str``
-	:param instring: the containing string to search against
-	:type instring: ``str``
+	:param string: the containing string to search against
+	:type string: ``str``
 	:return: True if there is a match, False otherwise
 	:rtype: ``bool``
 	"""
-	p_idx, s_idx, p_len, s_len = 0, 0, len(pattern), len(instring)
+	p_idx, s_idx, p_len, s_len = 0, 0, len(pattern), len(string)
 	while (p_idx != p_len) and (s_idx != s_len):
-		if pattern[p_idx].lower() == instring[s_idx].lower():
+		if pattern[p_idx].lower() == string[s_idx].lower():
 			p_idx += 1
 		s_idx += 1
 	return p_len != 0 and s_len != 0 and p_idx == p_len
 
 
-def fuzzy_match(pattern, instring, adj_bonus=5, sep_bonus=10, camel_bonus=10,
+def _fuzzy_match(pattern, string, adj_bonus=5, sep_bonus=10, camel_bonus=10,
 				lead_penalty=-3, max_lead_penalty=-9, unmatched_penalty=-1):
 	"""Return match boolean and match score.
 	:param pattern: the pattern to be matched
 	:type pattern: ``str``
-	:param instring: the containing string to search against
-	:type instring: ``str``
+	:param string: the containing string to search against
+	:type string: ``str``
 	:param int adj_bonus: bonus for adjacent matches
 	:param int sep_bonus: bonus if match occurs after a separator
 	:param int camel_bonus: bonus if match is uppercase
@@ -57,7 +43,7 @@ def fuzzy_match(pattern, instring, adj_bonus=5, sep_bonus=10, camel_bonus=10,
 	:return: 2-tuple with match truthiness at idx 0 and score at idx 1
 	:rtype: ``tuple``
 	"""
-	score, p_idx, s_idx, p_len, s_len = 0, 0, 0, len(pattern), len(instring)
+	score, p_idx, s_idx, p_len, s_len = 0, 0, 0, len(pattern), len(string)
 	prev_match, prev_lower = False, False
 	prev_sep = True  # so that matching first letter gets sep_bonus
 	best_letter, best_lower, best_letter_idx = None, None, None
@@ -66,7 +52,7 @@ def fuzzy_match(pattern, instring, adj_bonus=5, sep_bonus=10, camel_bonus=10,
 
 	while s_idx != s_len:
 		p_char = pattern[p_idx] if (p_idx != p_len) else None
-		s_char = instring[s_idx]
+		s_char = string[s_idx]
 		p_lower = p_char.lower() if p_char else None
 		s_lower, s_upper = s_char.lower(), s_char.upper()
 
@@ -133,3 +119,34 @@ def fuzzy_match(pattern, instring, adj_bonus=5, sep_bonus=10, camel_bonus=10,
 
 	return p_idx == p_len, score
 
+def _unordered_match(pattern,string):
+	"""Return true if all the charcters in pattern are present in string
+	:param pattern: the pattern to be matched
+	:type pattern: ``str``
+	:param string: the containing string to search against
+	:type string: ``str``
+	:rtype: ``bool``
+	"""
+	res = Counter(string.lower())
+	res.subtract(Counter(pattern.lower()))
+	return not(any(v < 0 for v in res.values()))
+
+# interfaces to matching methods
+def fuzzy_weight(pattern,string,minscore=9):
+	_ , score = _fuzzy_match(pattern,string)
+	return score > minscore
+
+def fuzzy_bool(pattern,string):
+	return _fuzzy_match_simple(pattern,string)
+
+def unordered(pattern,string):
+	return _unordered_match(pattern,string)
+
+def only_fail(pattern,string):
+	return False 
+
+methods = {'fuzzy_weight':fuzzy_weight, 'fuzzy_bool':fuzzy_bool, 'unordered':unordered, 'only_fail':only_fail}
+
+def search(pattern,names,method='unordered', **kw):
+	method = methods[method]
+	return list(filter(lambda x: method(pattern,x,**kw), names)) 
