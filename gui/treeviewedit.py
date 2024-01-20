@@ -25,11 +25,15 @@ class TreeviewEdit(ttk.Treeview):
 
 		self.master=master
 
-		self.nb_cells=len(desc['col_pos'])-1
-		for name,heading,pos in zip(desc['col_names'],desc['col_heading'],desc['head_pos']):
-			self.heading(name,text=heading,anchor=pos)
-		for name,width,pos in zip(desc['col_names'],desc['col_width'],desc['col_pos']):
-			self.column(name,minwidth=width,width=width,anchor=pos)
+		self.nb_cols=desc['nb_cols']-1 # because the first column is not used!
+		for col_name,heading,pos in zip(desc['col_names'],desc['col_heading'],desc['head_pos']):
+			self.heading(col_name,text=heading,anchor=pos)
+		for col_name,width,pos in zip(desc['col_names'],desc['col_width'],desc['col_pos']):
+			self.column(col_name,minwidth=width,width=width,anchor=pos)
+		self.on_dclick_Entry={}
+		for col_name,on_dclick in zip(desc['col_names'],desc['on_dclick']):
+			self.on_dclick_Entry[col_name]=on_dclick
+		self.col_names=desc['col_names']
 		self.names=desc.get('names',None)
 		
 		self.tag_configure('oddrow',background='#D9E1F2')
@@ -81,53 +85,50 @@ class TreeviewEdit(ttk.Treeview):
 
 	def tree_clicked(self,iid):
 		selected_text=self.item(iid,'text')
-		self.edit_name(iid,selected_text)
+		self.edit_cell(iid,-1,selected_text)
 
 	def cell_clicked(self,iid,column):
-		cell_index=int(column[1:])-1
+		cell_index=int(column[1:])-1 # '#12' is transformed in 11
 		selected_text=self.item(iid,'values')[cell_index]
 		self.edit_cell(iid,cell_index,selected_text)
 
 	def add_last_blank_row(self):
-		self.insert(parent="",index=tk.END,text=INVITE,values=self.nb_cells*[''])
+		values = self.nb_cols*['']
+		values[0] = INVITE
+		self.insert(parent="",index=tk.END,values=values)
 		self.draw_stripes()
 
 	# helper functions
 	def check_last_iid(self,iid):
-		return self.item(iid,'text')==INVITE
+		return self.item(iid,'values')[0]==INVITE
 
 	def insert_new_row(self,iid):
 		row_index = self.index(iid)
-		self.insert(parent="",index=row_index,text="",values=self.nb_cells*[''])
+		values=self.nb_cols*['']
+		self.insert(parent="",index=row_index,text="",values=values)
 		new_iid = self.prev(iid)
-		self.item(new_iid,text=f"new line iid:{new_iid}, index: {row_index}")
+		values[0]=f"new line iid:{new_iid}, index: {row_index}"
+		self.item(new_iid,values=values)
 		self.selection_set(new_iid)
-		self.edit_name(new_iid,"")
+		self.edit_cell(new_iid,0,"")
 		self.draw_stripes()
 
 	def edit_name(self,iid,text):
-		(x,y,wx,wy) = self.bbox(iid,"#0")
-		entry = ttk.Entry(self.master,width=wx)
-		entry.edited_column=-1
-		entry.edited_item_iid=iid
-		entry.place(x=x,y=y,w=wx,h=wy)
-		entry.insert(0,text)
-		entry.select_range(0,tk.END)
-		entry.focus()
-		entry.bind('<FocusOut>',self.on_focus_out)
-		entry.bind('<Return>',self.on_enter)
+		# do not use the first column anymore
+		pass
 
 	def edit_cell(self,iid,column_index,text):
-		(x,y,wx,wy) = self.bbox(iid,column_index)
-		entry = self.get_entry(column_index)(self.master,width=wx)
-		entry.edited_column=column_index
-		entry.edited_item_iid=iid
-		entry.place(x=x,y=y,w=wx,h=wy)
-		entry.insert(0,text)
-		entry.select_range(0,tk.END)
-		entry.focus()
-		entry.bind('<FocusOut>',self.on_focus_out)
-		entry.bind('<Return>',self.on_enter)
+		if -1 < column_index < self.nb_cols:
+			(x,y,wx,wy) = self.bbox(iid,column_index)
+			entry = self.get_entry(self.col_names[column_index+1],wx)
+			entry.edited_column=column_index
+			entry.edited_item_iid=iid
+			entry.place(x=x,y=y,w=wx,h=wy)
+			entry.insert(0,text)
+			entry.select_range(0,tk.END)
+			entry.focus()
+			entry.bind('<FocusOut>',self.on_focus_out)
+			entry.bind('<Return>',self.on_enter)
 
 	def draw_stripes(self):
 		is_even = True
@@ -137,16 +138,21 @@ class TreeviewEdit(ttk.Treeview):
 
 	def insert_df(self,df):
 		last_index = self.index(self.get_children()[-1])
-		cols = list(df.columns)[1:]
+		cols = list(df.columns)
 		i=0
 		for x in df['#0']:
-			self.insert(parent="",index=last_index,text=x,values=[df[y][i] for y in cols])
+			self.insert(parent="",index=last_index,values=[df[y][i] for y in cols])
 			i+=1
 			last_index+=1
 		self.draw_stripes()
 
-	def get_entry(self, column):
-		return ttk.Entry
+	def get_entry(self, column,wx):
+		func = self.on_dclick_Entry[column]
+		if func == 'default':
+			return ttk.Entry(self.master,width=wx)
+		else:
+			pass
+
 
 class TreeviewSet():
 	def __init__(self, master, **kw):

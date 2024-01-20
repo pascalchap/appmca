@@ -21,12 +21,18 @@ def get_names(filename = 'data/hotes.txt'):
 	return lines
 
 treeview_def = {
-	'col_names' : ["#0","poste","reponsable","date","debut","fin","heures","journee_complete","demi_journee","soiree","heure_sup_jour","heure_sup_nuit","totalHT","TVA","frais","repas","comment","total"]
-	, 'col_heading' : ["Nom Hote(sse)","Poste","Resp.","date","debut","fin","heures","Journee","1/2 J.","Soiree","Hsup J","Hsup N","total HT","TVA","frais","repas","remarque","total a payer"]
-	, 'col_width' : [250,150,50,90,60,60,60,50,50,50,50,50,70,70,70,70,150,90]
-	, 'col_pos' : [west,center,center,center,center,center,est,center,center,center,est,est,est,est,est,est,west,est]
-	, 'head_pos' : [west,center,center,center,center,center,center,center,center,center,center,center,center,center,center,center,west,center]
+	'col_names' : ["#0","nom","poste","reponsable","date","debut","fin","heures","journee_complete","demi_journee","soiree",
+	               "heure_sup_jour","heure_sup_nuit","totalHT","TVA","frais","repas","comment","total"]
+	, 'col_heading' : ["","Nom Hote(sse)","Poste","Resp.","date","debut","fin","heures","Journee","1/2 J.","Soiree",
+	                   "Hsup J","Hsup N","total HT","TVA","frais","repas","remarque","total a payer"]
+	, 'col_width' : [10,250,150,50,90,60,60,60,50,50,50,50,50,70,70,70,70,150,90]
+	, 'col_pos' : [west,west,center,center,center,center,center,est,center,center,center,est,est,est,est,est,est,west,est]
+	, 'head_pos' : [west,west,center,center,center,center,center,center,center,center,center,center,center,center,center,
+	                center,center,west,center]
+	, 'on_dclick' : [None,'default','default','default','default','default','default','default','default','default',
+	                 'default','default','default','default','default','default','default','default','default']
 	, 'names' : get_names()
+	, 'nb_cols' : 19
 }
 
 root = tk.Tk()
