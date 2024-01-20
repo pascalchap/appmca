@@ -4,9 +4,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-import sys
-sys.path.append('./gui')
-from autocmpltentry import AutoCmpltEntry
+from ..autocmpltentry import AutoCmpltEntry
 
 #get the name list
 def get_names(filename = 'data/hotes.txt'):

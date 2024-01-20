@@ -62,7 +62,7 @@ class AutoCmpltEntry(ttk.Entry):
 
 	def selection(self, event):
 		if self.lb_up:
-			self.focus_set()
+			# self.focus_set()
 			value = (self.lb.get(tk.ACTIVE)).strip(" \n")
 			self.var.set(value)
 			self.tl.destroy()
@@ -121,7 +121,7 @@ class AutoCmpltEntry(ttk.Entry):
 		pattern = self.var.get()
 		res = search(pattern,self.names,method=self.method)
 		# print(res)
-		return res[:9]
+		return res[:14]
 
 	def geometry(self):
 		geo = f"+{self.winfo_rootx()+self.winfo_width()}+{self.winfo_rooty()}"

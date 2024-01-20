@@ -13,6 +13,8 @@ import tkinter as tk
 from tkinter import ttk
 import pandas as pd
 
+from .autocmpltentry import AutoCmpltEntry
+
 INVITE = "Double click here to insert new line"
 
 class TreeviewEdit(ttk.Treeview):
@@ -22,11 +24,14 @@ class TreeviewEdit(ttk.Treeview):
 		super().__init__(master, columns=desc['col_names'][1:], **kw)
 
 		self.master=master
+
 		self.nb_cells=len(desc['col_pos'])-1
 		for name,heading,pos in zip(desc['col_names'],desc['col_heading'],desc['head_pos']):
 			self.heading(name,text=heading,anchor=pos)
 		for name,width,pos in zip(desc['col_names'],desc['col_width'],desc['col_pos']):
 			self.column(name,minwidth=width,width=width,anchor=pos)
+		self.names=desc.get('names',None)
+		
 		self.tag_configure('oddrow',background='#D9E1F2')
 		self.tag_configure('evenrow',background='#B4C6E7')
 		self.tag= ['evenrow','oddrow']

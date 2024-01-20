@@ -4,9 +4,7 @@
 from timeit import timeit
 import random
 
-import sys
-sys.path.append('./appmca')
-from fuzzysearch import search
+from ..fuzzysearch import search
 
 #get the name list
 def get_names(filename = 'data/hotes.txt'):
