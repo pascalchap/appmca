@@ -15,10 +15,11 @@ from fuzzysearch import search
 
 class AutoCmpltEntry(ttk.Entry):
 	"""docstring for AutoCmpltEntry"""
-	def __init__(self, master, method=None, names=[], **kw):
+	def __init__(self, master, method=None, names=[], onaccept=None, **kw):
 		super().__init__(master, **kw)
 		self.method = method
 		self.names = names
+		self.onaccept=onaccept
 		self.lb_up = False # a flag to know if the list box is created or not
 		self.var = self["textvariable"]
 		if self.var == '':
@@ -43,15 +44,16 @@ class AutoCmpltEntry(ttk.Entry):
 					self.tl.transient(self)
 					self.tl.overrideredirect(True)
 					self.lb = tk.Listbox(self.tl,highlightcolor='#0000ff',highlightbackground='#7f7f77',highlightthickness=3)
-					self.lb.bind("<Double-Button-1>", self.selection)
-					self.lb.bind("<Right>", self.selection)
-					self.lb.bind("<Return>", self.selection)
+					self.lb.bind("<Double-Button-1>", self.accept_lb_value)
+					self.lb.bind("<Right>", self.accept_lb_value)
+					self.lb.bind("<Return>", self.accept_lb_value)
 					self.lb.bind("<Left>", self.back)
-					self.lb.bind("<BackSpace>", self.back)
+					# self.lb.bind("<BackSpace>", self.back)
 					self.geometry()
 					self.lb.pack(fill=tk.X, expand=False)
 					self.tl.lift()
 					self.lb_up = True
+					self.lb.onaccept=self.onaccept
 				self.lb.delete(0, tk.END)
 				for w in words:
 					self.lb.insert(tk.END,w)
@@ -60,14 +62,19 @@ class AutoCmpltEntry(ttk.Entry):
 					self.tl.destroy()
 					self.lb_up = False
 
-	def selection(self, event):
-		if self.lb_up:
-			# self.focus_set()
-			value = (self.lb.get(tk.ACTIVE)).strip(" \n")
-			self.var.set(value)
-			self.tl.destroy()
-			self.lb_up = False
-			self.icursor(tk.END)
+	def accept_lb_value(self, event):
+		# if self.lb_up: not necessary since this event handler is bound to the listbox
+		# self.focus_set()
+		# get value selected from listbox and store it in the Entry widget
+		value = (self.lb.get(tk.ACTIVE)).strip(" \n")
+		self.var.set(value)
+		# destroy the top level window since it is now useless and update lb_up
+		self.tl.destroy()
+		self.lb_up = False
+		# self.icursor(tk.END)
+		# if onaccept is defined call the callback function
+		if event.widget.onaccept != None:
+			event.widget.onaccept()
 
 	def up(self, event):
 		if self.lb_up:
@@ -94,7 +101,6 @@ class AutoCmpltEntry(ttk.Entry):
 				self.lb.activate(index) 
 
 	def sel(self, event):
-		print(event)
 		if self.lb_up:
 			if self.lb.curselection() == ():
 				index = '0'
@@ -120,7 +126,6 @@ class AutoCmpltEntry(ttk.Entry):
 	def comparison(self):
 		pattern = self.var.get()
 		res = search(pattern,self.names,method=self.method)
-		# print(res)
 		return res[:14]
 
 	def geometry(self):

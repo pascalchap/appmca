@@ -62,19 +62,20 @@ class TreeviewEdit(ttk.Treeview):
 			self.cell_clicked(selected_iid,column)
 
 	def on_focus_out(self,event):
-		event.widget.destroy()
+		try:
+			if not event.widget.lb_up:
+				event.widget.destroy()
+		except Exception as e:
+			event.widget.destroy()
 
 	def on_enter(self,event):
 		text = event.widget.get()
 		iid = event.widget.edited_item_iid
 		column = event.widget.edited_column
 		event.widget.destroy()
-		if column == -1:
-			self.item(iid,text=text)
-		else:
-			current_values = self.item(iid).get("values")
-			current_values[column]=text
-			self.item(iid,value=current_values)
+		current_values = self.item(iid).get("values")
+		current_values[column]=text
+		self.item(iid,value=current_values)
 
 	def which_key(self,event):
 		print(event.keysym, event)
@@ -129,6 +130,7 @@ class TreeviewEdit(ttk.Treeview):
 			entry.focus()
 			entry.bind('<FocusOut>',self.on_focus_out)
 			entry.bind('<Return>',self.on_enter)
+			self.entry = entry
 
 	def draw_stripes(self):
 		is_even = True
@@ -150,8 +152,20 @@ class TreeviewEdit(ttk.Treeview):
 		func = self.on_dclick_Entry[column]
 		if func == 'default':
 			return ttk.Entry(self.master,width=wx)
+		elif func == 'AutoCmpltEntry':
+			return AutoCmpltEntry(self.master,width=wx,names=self.names,onaccept=self.onaccept)
 		else:
 			pass
+
+	def onaccept(self):
+		text = self.entry.get()
+		iid = self.entry.edited_item_iid
+		column = self.entry.edited_column
+		self.entry.destroy()
+		current_values = self.item(iid).get("values")
+		current_values[column]=text
+		self.item(iid,value=current_values)
+		self.entry = None
 
 
 class TreeviewSet():

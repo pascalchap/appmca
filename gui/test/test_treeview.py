@@ -29,7 +29,7 @@ treeview_def = {
 	, 'col_pos' : [west,west,center,center,center,center,center,est,center,center,center,est,est,est,est,est,est,west,est]
 	, 'head_pos' : [west,west,center,center,center,center,center,center,center,center,center,center,center,center,center,
 	                center,center,west,center]
-	, 'on_dclick' : [None,'default','default','default','default','default','default','default','default','default',
+	, 'on_dclick' : [None,'AutoCmpltEntry','default','default','default','default','default','default','default','default',
 	                 'default','default','default','default','default','default','default','default','default']
 	, 'names' : get_names()
 	, 'nb_cols' : 19
