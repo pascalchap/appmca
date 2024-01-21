@@ -62,9 +62,23 @@ class TreeviewEdit(ttk.Treeview):
 			self.cell_clicked(selected_iid,column)
 
 	def on_focus_out(self,event):
-		try:
-			if not event.widget.lb_up:
-				event.widget.destroy()
+		''' The user has moved out of the Entry widget. 4 cases are possible:
+		 - There is no listbox active, cancel the edition by simply destroying the widget
+		 - There is a listbox active, 2 subcases:
+		     - focus has moved to the listbox: do nothing, continue edition
+		     - focus has moved elsewhere, cancel the edition by destroyin the listbox and the widget
+		 - The entry does not implement listbox : cancel the edition by simply destroyin the widget
+		'''
+		try: # this should try a method of autocmpltentry 
+			if event.widget.lb_up:
+				if self.master.focus_get() == event.widget.lb:
+					pass
+				else:
+					event.widget.tl.destroy()
+					entry.widget.lb_up = False
+					event.widget.destroy()
+			else:
+				event.widget.destroy()		
 		except Exception as e:
 			event.widget.destroy()
 
@@ -122,15 +136,16 @@ class TreeviewEdit(ttk.Treeview):
 		if -1 < column_index < self.nb_cols:
 			(x,y,wx,wy) = self.bbox(iid,column_index)
 			entry = self.get_entry(self.col_names[column_index+1],wx)
-			entry.edited_column=column_index
-			entry.edited_item_iid=iid
-			entry.place(x=x,y=y,w=wx,h=wy)
-			entry.insert(0,text)
-			entry.select_range(0,tk.END)
-			entry.focus()
-			entry.bind('<FocusOut>',self.on_focus_out)
-			entry.bind('<Return>',self.on_enter)
-			self.entry = entry
+			if entry != None:
+				entry.edited_column=column_index
+				entry.edited_item_iid=iid
+				entry.place(x=x,y=y,w=wx,h=wy)
+				entry.insert(0,text)
+				entry.select_range(0,tk.END)
+				entry.focus()
+				entry.bind('<FocusOut>',self.on_focus_out)
+				entry.bind('<Return>',self.on_enter)
+				self.entry = entry
 
 	def draw_stripes(self):
 		is_even = True
@@ -155,7 +170,7 @@ class TreeviewEdit(ttk.Treeview):
 		elif func == 'AutoCmpltEntry':
 			return AutoCmpltEntry(self.master,width=wx,names=self.names,onaccept=self.onaccept)
 		else:
-			pass
+			return None
 
 	def onaccept(self):
 		text = self.entry.get()

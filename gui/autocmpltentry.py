@@ -45,6 +45,7 @@ class AutoCmpltEntry(ttk.Entry):
 					self.lb.bind("<Right>", self.accept_lb_value)
 					self.lb.bind("<Return>", self.accept_lb_value)
 					self.lb.bind("<Left>", self.back)
+					self.lb.bind('<Escape>', self.cancel)
 					self.place_lb()
 					self.lb.pack(fill=tk.X, expand=False)
 					self.lb_up = True
@@ -118,6 +119,11 @@ class AutoCmpltEntry(ttk.Entry):
 	def back(self, event):
 		self.focus_set()
 		self.tl.lift()
+
+	def cancel(self, event):
+		self.focus_set()
+		self.tl.destroy()
+		self.lb_up = False
 
 	def comparison(self):
 		pattern = self.var.get()
