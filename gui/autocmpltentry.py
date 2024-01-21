@@ -7,11 +7,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-import sys
-sys.path.append('./gui')
-sys.path.append('./appmca')
-
-from fuzzysearch import search
+from appmca.fuzzysearch import search
 
 class AutoCmpltEntry(ttk.Entry):
 	"""docstring for AutoCmpltEntry"""
@@ -20,6 +16,7 @@ class AutoCmpltEntry(ttk.Entry):
 		self.method = method
 		self.names = names
 		self.onaccept=onaccept
+		self.masterFrame=master
 		self.lb_up = False # a flag to know if the list box is created or not
 		self.var = self["textvariable"]
 		if self.var == '':
@@ -40,18 +37,16 @@ class AutoCmpltEntry(ttk.Entry):
 			words = self.comparison()
 			if words:
 				if not self.lb_up:
-					self.tl = tk.Toplevel()
-					self.tl.transient(self)
-					self.tl.overrideredirect(True)
+					self.tl = ttk.Frame(self.masterFrame)
+					# self.tl.transient(self)
+					# self.tl.overrideredirect(True)
 					self.lb = tk.Listbox(self.tl,highlightcolor='#0000ff',highlightbackground='#7f7f77',highlightthickness=3)
 					self.lb.bind("<Double-Button-1>", self.accept_lb_value)
 					self.lb.bind("<Right>", self.accept_lb_value)
 					self.lb.bind("<Return>", self.accept_lb_value)
 					self.lb.bind("<Left>", self.back)
-					# self.lb.bind("<BackSpace>", self.back)
-					self.geometry()
+					self.place_lb()
 					self.lb.pack(fill=tk.X, expand=False)
-					self.tl.lift()
 					self.lb_up = True
 					self.lb.onaccept=self.onaccept
 				self.lb.delete(0, tk.END)
@@ -63,7 +58,6 @@ class AutoCmpltEntry(ttk.Entry):
 					self.lb_up = False
 
 	def accept_lb_value(self, event):
-		# if self.lb_up: not necessary since this event handler is bound to the listbox
 		# self.focus_set()
 		# get value selected from listbox and store it in the Entry widget
 		value = (self.lb.get(tk.ACTIVE)).strip(" \n")
@@ -87,6 +81,7 @@ class AutoCmpltEntry(ttk.Entry):
 				index = str(int(index)-1)                
 				self.lb.selection_set(first=index)
 				self.lb.activate(index) 
+			self.lb.focus_set() 
 
 	def down(self, event):
 		if self.lb_up:
@@ -99,6 +94,7 @@ class AutoCmpltEntry(ttk.Entry):
 				index = str(int(index)+1)        
 				self.lb.selection_set(first=index)
 				self.lb.activate(index) 
+			self.lb.focus_set() 
 
 	def sel(self, event):
 		if self.lb_up:
@@ -110,7 +106,7 @@ class AutoCmpltEntry(ttk.Entry):
 				self.lb.selection_clear(first=index)
 				self.lb.selection_set(first=index)
 				self.lb.activate(index)
-			# self.lb.focus_set() 
+			self.lb.focus_set() 
 
 	def next(self, event):
 		if self.lb_up:
@@ -128,10 +124,8 @@ class AutoCmpltEntry(ttk.Entry):
 		res = search(pattern,self.names,method=self.method)
 		return res[:14]
 
-	def geometry(self):
-		geo = f"+{self.winfo_rootx()+self.winfo_width()}+{self.winfo_rooty()}"
-		self.tl.geometry(geo)
-		self.tl.lift()
+	def place_lb(self):
+		self.tl.place(in_=self.masterFrame,x=self.winfo_width(),y=self.winfo_height(),anchor='nw')
 
 
 

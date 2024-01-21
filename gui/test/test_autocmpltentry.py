@@ -26,7 +26,7 @@ def sync_windows(event=None):
 		j = 0
 		for cell in row:
 			if isinstance(cell,AutoCmpltEntry) and cell.lb_up:
-				cell.geometry()
+				cell.place_lb()
 
 root.bind("<Configure>", sync_windows)
 rows = list()
